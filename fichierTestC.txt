@@ -1,0 +1,53 @@
+program Pj_gen;
+uses SysUtils;
+type 
+  { On définit un objet qui permet d'additionner deux éléments et multiplier un élément par un entier strictement positif }
+
+  { TAnneauGenerique }
+  generic TAnneauGenerique<T> = class
+    function Somme(a, b: T): T;
+    function Multiple(n: integer; a: T): T;
+  end;
+
+  { On crée deux versions spécialisées, s'appliquant aux nombre réels et aux chaines de caractères }
+  TAnneauReel = specialize TAnneauGenerique<Real>;
+  TAnneauChaine = specialize TAnneauGenerique<String>;
+
+{ TAnneauGenerique }
+
+function TAnneauGenerique.Somme(a, b: T): T;
+begin
+  result := a + b;
+end;
+
+function TAnneauGenerique.Multiple(n: integer; a: T): T;
+var i: integer;
+begin
+     { On ne gère que le cas où n >= 1 }
+     result := a;
+     for i := 2 to n do result := result + a;
+end;      
+
+var
+  r: TAnneauReel;
+  c: TAnneauChaine;     
+
+begin
+  r := TAnneauReel.Create;
+  writeln('Avec des reels :');
+  writeln('4.1 + 5.2 = ', FloatToStr( r.Somme(4.1, 5.2) ));
+  writeln('3 x 5.1 = ', FloatToStr( r.Multiple(3, 5.1) )); 
+  r.free;
+
+  writeln;
+
+  c := TAnneauChaine.Create;
+  writeln('Avec des chaines :');
+  writeln('bon + jour = ', c.Somme('bon', 'jour'));
+  writeln('10 x a = ', c.Multiple(10, 'a'));
+  c.free;
+
+  writeln;
+  writeln('Press <Enter> to quit');
+  readln;
+end.
